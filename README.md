@@ -35,12 +35,14 @@ this project build docker image automatically so deploy on docker
 ```shell script
 sudo docker run -d  -p 8080:8080 --name=testserver \
 -v /etc/localtime:/etc/localtime:ro  -e TZ=Asia/Seoul  --restart=unless-stopped \
+-e SLACK_URL= SLACK_URL\
 docker.pkg.github.com/me-X-us/upload-processing-server/test:version
 ```
 - deploy running server(master branch)
 ```shell script
 sudo docker run -d  -p 8080:8080 --name=server \
 -v /etc/localtime:/etc/localtime:ro  -e TZ=Asia/Seoul  --restart=unless-stopped \
+-e SLACK_URL= SLACK_URL\
 docker.pkg.github.com/me-X-us/upload-processing-server/release:version
 ```
 ## Contributing

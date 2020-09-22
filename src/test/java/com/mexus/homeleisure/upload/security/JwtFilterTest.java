@@ -24,7 +24,7 @@ class JwtFilterTest extends BaseControllerTest {
     void FailBecauseWrongSignature() throws Exception {
         String token = jwtTokenProvider.createAccessToken("TestUser1", Collections.singletonList(UserRole.ROLE_USER));
         this.mockMvc.perform(RestDocumentationRequestBuilders.post("/upload")
-                .header("Authorization", "Bearer " + token+"i"))
+                .header("Authorization", "Bearer " + token + "i"))
                 .andExpect(status().isForbidden())
                 .andExpect(jsonPath("error").value("0003"))
                 .andDo(document("0003"))
@@ -37,7 +37,7 @@ class JwtFilterTest extends BaseControllerTest {
     void FailBecauseMalformed() throws Exception {
         String token = jwtTokenProvider.createAccessToken("TestUser1", Collections.singletonList(UserRole.ROLE_USER));
         this.mockMvc.perform(RestDocumentationRequestBuilders.post("/upload")
-                .header("Authorization", "Bearer " + "i"+token))
+                .header("Authorization", "Bearer " + "i" + token))
                 .andExpect(status().isForbidden())
                 .andExpect(jsonPath("error").value("0004"))
                 .andDo(document("0004"))
