@@ -52,15 +52,7 @@ public class FileService {
     }
     Frames frames = restTemplate
         .getForObject(BASE_URL + "/?video_path=" + fileLocation + fileName, Frames.class);
-    System.out.println(frames);
-    ArrayList<KeyPoints> keyPoints = new ArrayList<KeyPoints>();
-    for (Frame frame : frames.getFrames()) {
-      int frameNo = frame.getFrameNo();
-      for (KeyPoint keyPoint : frame.getKeyPoints()) {
-        keyPoints.add(new KeyPoints(frameNo, keyPoint));
-      }
-    }
-    keyPointsRepository.saveAll(keyPoints);
+    keyPointsRepository.saveAll(mapKeyPoints(frames));
     return fileName;
   }
 
@@ -70,5 +62,16 @@ public class FileService {
       throw new FileNameException(fileName);
     }
     return fileName;
+  }
+
+  private ArrayList<KeyPoints> mapKeyPoints(Frames frames){
+    ArrayList<KeyPoints> keyPoints = new ArrayList<KeyPoints>();
+    for (Frame frame : frames.getFrames()) {
+      int frameNo = frame.getFrameNo();
+      for (KeyPoint keyPoint : frame.getKeyPoints()) {
+        keyPoints.add(new KeyPoints(frameNo, keyPoint));
+      }
+    }
+    return keyPoints;
   }
 }
