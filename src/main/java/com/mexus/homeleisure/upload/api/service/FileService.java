@@ -3,13 +3,17 @@ package com.mexus.homeleisure.upload.api.service;
 import com.mexus.homeleisure.upload.api.exception.CantCreateFileDirectoryException;
 import com.mexus.homeleisure.upload.api.exception.FileNameException;
 import com.mexus.homeleisure.upload.api.exception.FileUploadException;
-import com.mexus.homeleisure.upload.api.model.Frames;
+import com.mexus.homeleisure.upload.api.model.KeyPoints;
+import com.mexus.homeleisure.upload.api.model.KeyPointsRepository;
+import com.mexus.homeleisure.upload.api.model.dto.Frame;
+import com.mexus.homeleisure.upload.api.model.dto.Frames;
+import com.mexus.homeleisure.upload.api.model.dto.KeyPoint;
 import com.mexus.homeleisure.upload.configs.FileConfig;
-import java.awt.SystemTray;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.Objects;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,11 +27,13 @@ public class FileService {
   private final Path fileLocation;
   private final String BASE_URL;
   private final RestTemplate restTemplate = new RestTemplate();
+  private final KeyPointsRepository keyPointsRepository;
 
   @Autowired
-  public FileService(FileConfig config) {
+  public FileService(FileConfig config, KeyPointsRepository keyPointsRepository) {
     this.fileLocation = Paths.get(config.getUploadDir()).toAbsolutePath().normalize();
     this.BASE_URL = config.getPoseEstimationServerUrl();
+    this.keyPointsRepository = keyPointsRepository;
     try {
       Files.createDirectories(this.fileLocation);
     } catch (Exception e) {
@@ -47,6 +53,14 @@ public class FileService {
     Frames frames = restTemplate
         .getForObject(BASE_URL + "/?video_path=" + fileLocation + fileName, Frames.class);
     System.out.println(frames);
+    ArrayList<KeyPoints> keyPoints = new ArrayList<KeyPoints>();
+    for (Frame frame : frames.getFrames()) {
+      int frameNo = frame.getFrameNo();
+      for (KeyPoint keyPoint : frame.getKeyPoints()) {
+        keyPoints.add(new KeyPoints(frameNo, keyPoint));
+      }
+    }
+    keyPointsRepository.saveAll(keyPoints);
     return fileName;
   }
 

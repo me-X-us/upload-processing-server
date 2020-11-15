@@ -1,4 +1,4 @@
-package com.mexus.homeleisure.upload.api.model;
+package com.mexus.homeleisure.upload.api.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
