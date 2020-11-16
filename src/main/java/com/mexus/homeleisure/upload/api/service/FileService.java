@@ -41,7 +41,7 @@ public class FileService {
     }
   }
 
-  public String storeFile(MultipartFile file) {
+  public String storeFile(MultipartFile file, long trainingId) {
     String fileName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
     try {
       fileName = checkFileNameAndExtension(file);
@@ -52,7 +52,7 @@ public class FileService {
     }
     Frames frames = restTemplate
         .getForObject(BASE_URL + "/?video_path=" + fileLocation + fileName, Frames.class);
-    keyPointsRepository.saveAll(mapKeyPoints(frames));
+    keyPointsRepository.saveAll(mapKeyPoints(trainingId, frames));
     return fileName;
   }
 
@@ -64,12 +64,12 @@ public class FileService {
     return fileName;
   }
 
-  private ArrayList<KeyPoints> mapKeyPoints(Frames frames){
+  private ArrayList<KeyPoints> mapKeyPoints(long trainingId, Frames frames) {
     ArrayList<KeyPoints> keyPoints = new ArrayList<KeyPoints>();
     for (Frame frame : frames.getFrames()) {
       int frameNo = frame.getFrameNo();
       for (KeyPoint keyPoint : frame.getKeyPoints()) {
-        keyPoints.add(new KeyPoints(frameNo, keyPoint));
+        keyPoints.add(new KeyPoints(trainingId, frameNo, keyPoint));
       }
     }
     return keyPoints;

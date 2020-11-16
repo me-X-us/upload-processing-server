@@ -14,13 +14,15 @@ public class KeyPoints {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long KeyPointId;
 
+  private long trainingId;
   private int frameNo;
   private double y;
   private double x;
   private String part;
   private double score;
 
-  public KeyPoints(int frameNo, KeyPoint keypoint){
+  public KeyPoints(long trainingId, int frameNo, KeyPoint keypoint){
+    this.trainingId = trainingId;
     this.frameNo = frameNo;
     this.x = keypoint.getX();
     this.y = keypoint.getY();
