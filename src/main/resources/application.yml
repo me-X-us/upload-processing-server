@@ -24,6 +24,7 @@ spring:
 
 file:
   upload-dir: ./files
+  poseEstimationServerUrl: "http://localhost:8080/test.json"
 
 jwt:
   secretKey: "This Data Must Be Managed By Secret NOT HERE THIS IS JUST EXAMPLE"

@@ -9,7 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/files")
+@RequestMapping(value = "/trainings/upload")
 public class FileUploadController {
 
     private final FileService fileService;
@@ -17,11 +17,12 @@ public class FileUploadController {
     /*
     Upload File
      */
-    @PostMapping
+    @PostMapping("/{trainingId}")
     @ResponseStatus(HttpStatus.OK)
     public FileUploadResponse uploadProfileImage(
-            @RequestParam("media") MultipartFile file
+        @RequestParam("media") MultipartFile file,
+        @PathVariable long trainingId
     ) {
-        return new FileUploadResponse(this.fileService.storeFile(file), file.getContentType(), file.getSize());
+        return new FileUploadResponse(this.fileService.storeFile(file, trainingId), file.getContentType(), file.getSize());
     }
 }
