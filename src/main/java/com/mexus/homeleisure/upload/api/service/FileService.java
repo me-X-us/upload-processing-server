@@ -25,14 +25,16 @@ import org.springframework.web.multipart.MultipartFile;
 public class FileService {
 
   private final Path fileLocation;
-  private final String BASE_URL;
+  private final String POSE_BASE_URL;
+  private final String SHAPE_BASE_URL;
   private final RestTemplate restTemplate = new RestTemplate();
   private final KeyPointsRepository keyPointsRepository;
 
   @Autowired
   public FileService(FileConfig config, KeyPointsRepository keyPointsRepository) {
     this.fileLocation = Paths.get(config.getUploadDir()).toAbsolutePath().normalize();
-    this.BASE_URL = config.getPoseEstimationServerUrl();
+    this.POSE_BASE_URL = config.getPoseEstimationServerUrl();
+    this.SHAPE_BASE_URL = config.getShapeEstimationServerUrl();
     this.keyPointsRepository = keyPointsRepository;
     try {
       Files.createDirectories(this.fileLocation);
@@ -51,8 +53,9 @@ public class FileService {
       throw new FileUploadException(fileName, e);
     }
     Frames frames = restTemplate
-        .getForObject(BASE_URL + "/?video_path=" + fileLocation + fileName, Frames.class);
+        .getForObject(POSE_BASE_URL + "/?video_path=" + fileLocation + fileName, Frames.class);
     keyPointsRepository.saveAll(mapKeyPoints(trainingId, frames));
+    restTemplate.getForObject(SHAPE_BASE_URL + "/?video_path=" + fileLocation + fileName, String.class);
     return fileName;
   }
 

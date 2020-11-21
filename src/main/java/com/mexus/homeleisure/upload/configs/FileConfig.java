@@ -10,4 +10,5 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class FileConfig {
     private String uploadDir;
     private String poseEstimationServerUrl;
+    private String shapeEstimationServerUrl;
 }
