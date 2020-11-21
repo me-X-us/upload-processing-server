@@ -33,7 +33,7 @@ jobs:
         tag: |
           latest
           ${{github.sha}}
-        imageName: test
+        imageName: upload-server
 #    - name: Deploy on Test Server
 #      uses: garygrossgarten/github-action-ssh@release
 #      with:
