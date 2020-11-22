@@ -1,7 +1,6 @@
 package com.mexus.homeleisure.upload.api.service;
 
 import com.mexus.homeleisure.upload.api.exception.CantCreateFileDirectoryException;
-import com.mexus.homeleisure.upload.api.exception.FileNameException;
 import com.mexus.homeleisure.upload.api.exception.FileUploadException;
 import com.mexus.homeleisure.upload.api.model.KeyPoints;
 import com.mexus.homeleisure.upload.api.model.KeyPointsRepository;
@@ -15,6 +14,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.StringTokenizer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -25,14 +25,16 @@ import org.springframework.web.multipart.MultipartFile;
 public class FileService {
 
   private final Path fileLocation;
-  private final String BASE_URL;
+  private final String POSE_BASE_URL;
+  private final String SHAPE_BASE_URL;
   private final RestTemplate restTemplate = new RestTemplate();
   private final KeyPointsRepository keyPointsRepository;
 
   @Autowired
   public FileService(FileConfig config, KeyPointsRepository keyPointsRepository) {
     this.fileLocation = Paths.get(config.getUploadDir()).toAbsolutePath().normalize();
-    this.BASE_URL = config.getPoseEstimationServerUrl();
+    this.POSE_BASE_URL = config.getPoseEstimationServerUrl();
+    this.SHAPE_BASE_URL = config.getShapeEstimationServerUrl();
     this.keyPointsRepository = keyPointsRepository;
     try {
       Files.createDirectories(this.fileLocation);
@@ -43,24 +45,20 @@ public class FileService {
 
   public String storeFile(MultipartFile file, long trainingId) {
     String fileName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
+    StringTokenizer tockens = new StringTokenizer(fileName);
+    tockens.nextToken(".");
+    fileName = trainingId + "." + tockens.nextToken();
     try {
-      fileName = checkFileNameAndExtension(file);
       Files.copy(file.getInputStream(), fileLocation.resolve(fileName),
           StandardCopyOption.REPLACE_EXISTING);
     } catch (Exception e) {
       throw new FileUploadException(fileName, e);
     }
     Frames frames = restTemplate
-        .getForObject(BASE_URL + "/?video_path=" + fileLocation + fileName, Frames.class);
+        .getForObject(POSE_BASE_URL + "/?video_path=" + fileLocation + fileName, Frames.class);
     keyPointsRepository.saveAll(mapKeyPoints(trainingId, frames));
-    return fileName;
-  }
-
-  private String checkFileNameAndExtension(MultipartFile file) {
-    String fileName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
-    if (fileName.contains("..")) {
-      throw new FileNameException(fileName);
-    }
+    restTemplate
+        .getForObject(SHAPE_BASE_URL + "/?video_path=" + fileLocation + fileName, String.class);
     return fileName;
   }
 
