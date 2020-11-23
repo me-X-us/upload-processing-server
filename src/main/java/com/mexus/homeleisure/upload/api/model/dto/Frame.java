@@ -8,13 +8,13 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
     "frameNo",
-    "keyPoint"
+    "keyPoints"
 })
 public class Frame {
 
   @JsonProperty("frameNo")
   private Integer frameNo;
-  @JsonProperty("keyPoint")
+  @JsonProperty("keyPoints")
   private List<KeyPoint> keyPoints = null;
 
   @JsonProperty("frameNo")
@@ -27,12 +27,12 @@ public class Frame {
     this.frameNo = frameNo;
   }
 
-  @JsonProperty("keyPoint")
+  @JsonProperty("keyPoints")
   public List<KeyPoint> getKeyPoints() {
     return keyPoints;
   }
 
-  @JsonProperty("keyPoint")
+  @JsonProperty("keyPoints")
   public void setKeyPoints(List<KeyPoint> keyPoints) {
     this.keyPoints = keyPoints;
   }

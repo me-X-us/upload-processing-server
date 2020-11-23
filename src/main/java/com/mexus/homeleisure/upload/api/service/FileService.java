@@ -27,15 +27,17 @@ public class FileService {
   private final Path fileLocation;
   private final String POSE_BASE_URL;
   private final String SHAPE_BASE_URL;
-  private final RestTemplate restTemplate = new RestTemplate();
+  private final RestTemplate restTemplate;
   private final KeyPointsRepository keyPointsRepository;
 
   @Autowired
-  public FileService(FileConfig config, KeyPointsRepository keyPointsRepository) {
+  public FileService(FileConfig config, KeyPointsRepository keyPointsRepository,
+                     RestTemplate restTemplate) {
     this.fileLocation = Paths.get(config.getUploadDir()).toAbsolutePath().normalize();
     this.POSE_BASE_URL = config.getPoseEstimationServerUrl();
     this.SHAPE_BASE_URL = config.getShapeEstimationServerUrl();
     this.keyPointsRepository = keyPointsRepository;
+    this.restTemplate = restTemplate;
     try {
       Files.createDirectories(this.fileLocation);
     } catch (Exception e) {
@@ -55,10 +57,10 @@ public class FileService {
       throw new FileUploadException(fileName, e);
     }
     Frames frames = restTemplate
-        .getForObject(POSE_BASE_URL + "/?video_path=" + fileLocation + fileName, Frames.class);
+        .getForObject(POSE_BASE_URL + "/?video_path=./video/"+trainingId+".mp4", Frames.class);
     keyPointsRepository.saveAll(mapKeyPoints(trainingId, frames));
     restTemplate
-        .getForObject(SHAPE_BASE_URL + "/?video_path=" + fileLocation + fileName, String.class);
+        .getForObject(SHAPE_BASE_URL + "/?video_path=./video/"+trainingId+".mp4", String.class);
     return fileName;
   }
 
