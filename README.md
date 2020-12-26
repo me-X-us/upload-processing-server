@@ -8,7 +8,7 @@
   - [Deployment](#deployment)
   - [Used or Referenced Projects](Used-or-Referenced-Projects)
 ## About Upload And Processing Server
-This Project is one of micro service of HomeLeisure Server
+This Project is one of micro service of training.zip Server
 It will provide uploading and link vision module
 
 ## Overview
@@ -19,9 +19,7 @@ It will provide uploading and link vision module
 - JWT Authentication(use AccessToken and RefreshToken)
 - Pull Request Auto BuildTest
 - Build Docker image when merged develop(`test`) and master(`release`) branch
-- [Class Document](https://me-X-us.github.io/upload-processing-server)  
 
-   ```
 ## Getting Started
 ### Dependencies
 - JDK11
@@ -36,14 +34,7 @@ this project build docker image automatically so deploy on docker
 sudo docker run -d  -p 8080:8080 --name=testserver \
 -v /etc/localtime:/etc/localtime:ro  -e TZ=Asia/Seoul  --restart=unless-stopped \
 -e SLACK_URL= SLACK_URL\
-docker.pkg.github.com/me-X-us/upload-processing-server/test:version
-```
-- deploy running server(master branch)
-```shell script
-sudo docker run -d  -p 8080:8080 --name=server \
--v /etc/localtime:/etc/localtime:ro  -e TZ=Asia/Seoul  --restart=unless-stopped \
--e SLACK_URL= SLACK_URL\
-docker.pkg.github.com/me-X-us/upload-processing-server/release:version
+docker.pkg.github.com/me-X-us/upload-processing-server/upload-server:version
 ```
 ## Contributing
 
